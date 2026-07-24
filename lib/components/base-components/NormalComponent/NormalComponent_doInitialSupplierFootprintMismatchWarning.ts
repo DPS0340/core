@@ -20,7 +20,7 @@ type SupplierPartCandidate = {
   supplierPartNumber: string
 }
 
-const supplierNames = supplierProps.shape.supplierPartNumbers.unwrap().keySchema
+const supplierNames = supplierProps.shape.supplierPartNumbers.unwrap().keyType
   .options satisfies SupplierName[]
 
 const isCopperElement = (elm: AnyCircuitElement) =>

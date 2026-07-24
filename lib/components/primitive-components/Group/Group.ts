@@ -156,7 +156,7 @@ const ensureRouteStartsAtSourceTraceStart = ({
     : route
 }
 
-export class Group<Props extends z.ZodType<any, any, any> = typeof groupProps>
+export class Group<Props extends z.ZodType<any, any> = typeof groupProps>
   extends NormalComponent<Props>
   implements ISubcircuit
 {

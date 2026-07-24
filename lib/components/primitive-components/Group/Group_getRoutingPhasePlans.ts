@@ -94,7 +94,7 @@ function traceHasEndpointMatchingConnectionSelector(
 }
 
 function getAutoroutersByPhaseIndex(
-  group: Group<z.ZodType>,
+  group: Group<z.ZodType<any, any>>,
 ): Map<number | null, AutorouterProp> {
   const autoroutingPhases = group.selectAll(
     "autoroutingphase",
@@ -111,7 +111,7 @@ function getAutoroutersByPhaseIndex(
 }
 
 function getAutoroutingPhasePropsByPhaseIndex(
-  group: Group<z.ZodType>,
+  group: Group<z.ZodType<any, any>>,
 ): Map<number | null, AutoroutingPhaseProps> {
   const autoroutingPhases = group.selectAll(
     "autoroutingphase",
@@ -182,7 +182,7 @@ function getDrcTolerancesFromAutoroutingPhaseProps(
 }
 
 export function Group_getRoutingPhasePlans(
-  group: Group<z.ZodType>,
+  group: Group<z.ZodType<any, any>>,
 ): RoutingPhasePlan[] {
   const traces = group.selectAll("trace") as Trace[]
   const nets = group.selectAll("net") as Net[]

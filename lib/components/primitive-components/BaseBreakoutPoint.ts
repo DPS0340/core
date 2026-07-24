@@ -19,7 +19,7 @@ export const baseBreakoutPointProps = pcbLayoutProps.omit({
  * receives its `matchedPort` programmatically).
  */
 export class BaseBreakoutPoint<
-  TProps extends ZodType = typeof baseBreakoutPointProps,
+  TProps extends ZodType<any, any> = typeof baseBreakoutPointProps,
 > extends PrimitiveComponent<TProps> {
   pcb_breakout_point_id: string | null = null
   matchedPort: Port | null = null

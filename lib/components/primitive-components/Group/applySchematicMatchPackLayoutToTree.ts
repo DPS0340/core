@@ -804,7 +804,7 @@ function convertTreeToMatchPackInputProblem(
 }
 
 export function applySchematicMatchPackLayoutToTree<
-  Props extends z.ZodType<any, any, any>,
+  Props extends z.ZodType<any, any>,
 >(
   group: Group<Props>,
   tree: CircuitJsonTreeNode,

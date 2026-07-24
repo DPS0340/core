@@ -66,7 +66,7 @@ import {
 } from "react"
 import { type SchSymbol, symbols } from "schematic-symbols"
 import { decomposeTSR } from "transformation-matrix"
-import { ZodType, z } from "zod"
+import { z } from "zod"
 import { InvalidProps } from "../../../errors/InvalidProps"
 import { CadAssembly } from "../../primitive-components/CadAssembly"
 import { CadModel } from "../../primitive-components/CadModel"
@@ -126,7 +126,7 @@ export type PortMap<T extends string> = {
  */
 
 export class NormalComponent<
-    ZodProps extends z.ZodType = any,
+    ZodProps extends z.ZodType<any, any> = z.ZodType<any, any>,
     PortNames extends string = never,
   >
   extends PrimitiveComponent<ZodProps>

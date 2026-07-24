@@ -16,7 +16,7 @@ type SectionBoundsWithChildren = {
 }
 
 export function Group_doInitialSchematicLayoutSections<
-  Props extends z.ZodType<any, any, any>,
+  Props extends z.ZodType<any, any>,
 >(group: Group<Props>): void {
   const { db } = group.root!
 

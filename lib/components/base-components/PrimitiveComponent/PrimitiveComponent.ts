@@ -9,7 +9,7 @@ import type { BoardI } from "lib/components/normal-components/BoardI"
 import type { IGroup } from "lib/components/primitive-components/Group/IGroup"
 import type { ISubcircuit } from "lib/components/primitive-components/Group/Subcircuit/ISubcircuit"
 import type { ISymbol } from "lib/components/primitive-components/Symbol/ISymbol"
-import { InvalidProps } from "lib/errors/InvalidProps"
+import { formatInvalidPropsError, InvalidProps } from "lib/errors/InvalidProps"
 import type { Ftype } from "lib/utils/constants"
 import {
   evaluateCalcString,
@@ -34,7 +34,6 @@ import {
   rotate,
   translate,
 } from "transformation-matrix"
-import type { Primitive, ZodType } from "zod"
 import { z } from "zod"
 import {
   cssSelectPrimitiveComponentAdapter,
@@ -54,7 +53,7 @@ const cssSelectOptionsInsideSubcircuit: Options<
 export interface BaseComponentConfig {
   componentName: string
   schematicSymbolName?: string | null
-  zodProps: z.ZodType
+  zodProps: z.ZodType<any, any>
   sourceFtype?: Ftype | null
   shouldRenderAsSchematicBox?: boolean
 }
@@ -76,7 +75,7 @@ const basePrimitiveComponentConfig: BaseComponentConfig = {
 }
 
 export abstract class PrimitiveComponent<
-  ZodProps extends ZodType = any,
+  ZodProps extends z.ZodType<any, any> = z.ZodType<any, any>,
 > extends Renderable {
   parent: PrimitiveComponent | null = null
   children: PrimitiveComponent[]
@@ -198,14 +197,16 @@ export abstract class PrimitiveComponent<
     super(props)
     this.children = []
     this.childrenPendingRemoval = []
-    this.props = props ?? {}
+    this.props = (props ?? {}) as z.input<ZodProps>
     this.externallyAddedAliases = []
+    const configuredZodProps = this.config.zodProps
     const zodProps =
-      "partial" in this.config.zodProps
-        ? (this.config.zodProps as z.ZodObject<any, any, any>).partial({
-            name: true,
+      configuredZodProps instanceof z.ZodObject &&
+      "name" in configuredZodProps.shape
+        ? configuredZodProps.safeExtend({
+            name: configuredZodProps.shape.name.optional(),
           })
-        : this.config.zodProps
+        : configuredZodProps
     const parsePropsResult = zodProps.safeParse(props ?? {})
     if (parsePropsResult.success) {
       this._parsedProps = parsePropsResult.data as z.infer<ZodProps>
@@ -213,7 +214,7 @@ export abstract class PrimitiveComponent<
       throw new InvalidProps(
         this.lowercaseComponentName,
         this.props,
-        parsePropsResult.error.format(),
+        formatInvalidPropsError(parsePropsResult.error),
       )
     }
   }
@@ -224,10 +225,10 @@ export abstract class PrimitiveComponent<
       ...props,
     }) as z.infer<ZodProps>
     const oldProps = this.props
-    this.props = newProps
+    this.props = newProps as z.input<ZodProps>
     this._parsedProps = this.config.zodProps.parse(props) as z.infer<ZodProps>
     this.onPropsChange({
-      oldProps,
+      oldProps: oldProps as z.infer<ZodProps>,
       newProps,
       changedProps: Object.keys(props),
     })

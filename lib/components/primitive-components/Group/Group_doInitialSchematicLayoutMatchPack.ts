@@ -6,7 +6,7 @@ import { getSchematicCircuitJsonTrees } from "./getSchematicCircuitJsonTrees"
 export { applySchematicMatchPackLayoutToTree } from "./applySchematicMatchPackLayoutToTree"
 
 export function Group_doInitialSchematicLayoutMatchPack<
-  Props extends z.ZodType<any, any, any>,
+  Props extends z.ZodType<any, any>,
 >(group: Group<Props>): void {
   const { db } = group.root!
 

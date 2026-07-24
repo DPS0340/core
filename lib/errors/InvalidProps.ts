@@ -1,9 +1,49 @@
-import type { ZodFormattedError } from "zod"
+import { z } from "zod"
+
+export type FormattedPropsError = {
+  _errors: string[]
+  [key: string]: FormattedPropsError | string[] | undefined
+}
+
+type ErrorTree = {
+  errors: string[]
+  properties?: Record<string, ErrorTree | undefined>
+  items?: Record<string, ErrorTree | undefined>
+}
+
+function formatErrorMessage(message: string): string {
+  return /^Invalid input: expected .+, received undefined$/.test(message)
+    ? "Required"
+    : message
+}
+
+function formatErrorTree(tree: ErrorTree): FormattedPropsError {
+  const formattedError: FormattedPropsError = {
+    _errors: tree.errors.map(formatErrorMessage),
+  }
+
+  for (const [key, child] of Object.entries(tree.properties ?? {})) {
+    if (child) formattedError[key] = formatErrorTree(child)
+  }
+
+  for (const [key, child] of Object.entries(tree.items ?? {})) {
+    if (child) formattedError[key] = formatErrorTree(child)
+  }
+
+  return formattedError
+}
+
+export function formatInvalidPropsError(
+  error: z.ZodError,
+): FormattedPropsError {
+  return formatErrorTree(z.treeifyError(error) as unknown as ErrorTree)
+}
+
 export class InvalidProps extends Error {
   constructor(
     public readonly componentName: string,
     public readonly originalProps: any,
-    public readonly formattedError: ZodFormattedError<any>,
+    public readonly formattedError: FormattedPropsError,
   ) {
     let message: string
 

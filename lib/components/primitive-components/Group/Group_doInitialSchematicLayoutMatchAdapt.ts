@@ -9,7 +9,7 @@ import { updateSchematicPrimitivesForLayoutShift } from "./utils/updateSchematic
 const debug = Debug("Group_doInitialSchematicLayoutMatchAdapt")
 
 export function Group_doInitialSchematicLayoutMatchAdapt<
-  Props extends z.ZodType<any, any, any>,
+  Props extends z.ZodType<any, any>,
 >(group: Group<Props>): void {
   const { db } = group.root!
 
